@@ -7,24 +7,17 @@ export async function GET(request: Request) {
 
   if (!id) return NextResponse.json({ error: 'Order ID required' }, { status: 400 });
 
-  // 1. Find the Order
+  // Search logic: Exact match OR partial match (for ease of use)
+  // Also checks if a USER ID was sent, to find that user's active order
   let order = db.orders.find(o => o.id === id || o.id.includes(id));
   
   if (!order) {
+    // specific logic: if ID is a user ID, find their order
     const userOrder = db.orders.find(o => o.user_id === id);
     if (userOrder) order = userOrder;
   }
 
-  if (order) {
-    // 2. REVERSE LOOKUP: Find the shipment that points to this order
-    const shipment = db.shipments.find(s => s.order_id === order?.id);
-
-    // 3. Return a combined object (The Bot loves this)
-    return NextResponse.json({
-      ...order, // All order details
-      shipment_details: shipment || null // Embed the shipment info directly
-    });
-  }
+  if (order) return NextResponse.json(order);
   
   return NextResponse.json({ error: 'Order not found' }, { status: 404 });
 }
