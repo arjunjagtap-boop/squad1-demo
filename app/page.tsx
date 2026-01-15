@@ -18,11 +18,11 @@ interface ChatMessage {
 
 // --- MOCK API FOR NUGGET ---
 const sendToNuggetAPI = async (message: string): Promise<ChatMessage> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 800)); // Faster response for better demo feel
 
   const lowerMsg = message.toLowerCase();
 
-  // 1. Core Logic from Case Study
+  // 1. Core Logic from Case Study 
   if (lowerMsg.includes('123')) {
     return {
       id: Date.now(),
@@ -39,7 +39,7 @@ const sendToNuggetAPI = async (message: string): Promise<ChatMessage> => {
     };
   }
 
-  // Triage Logic [cite: 126]
+  // Triage Logic 
   if (lowerMsg.includes('talk') || lowerMsg.includes('human') || lowerMsg.includes('issue')) {
     return {
       id: Date.now(),
@@ -62,14 +62,12 @@ export default function Home() {
   const [orderId, setOrderId] = useState<string>('');
   const [status, setStatus] = useState<OrderStatus | null>(null);
   
-  // Chat State - Default is TRUE now
-  const [isChatOpen, setIsChatOpen] = useState(true);
+  // Chat State
   const [messages, setMessages] = useState<ChatMessage[]>([
     { 
       id: 1, 
       sender: 'bot', 
       text: "Hi! I'm the Squad1 Assistant. I can track your luxury order or connect you with support instantly.",
-      // Removed generic 'Where is my order' button to force natural conversation or ID entry
       quickActions: ["Check Order 123", "Check Order 456", "Talk to someone"] 
     }
   ]);
@@ -80,7 +78,7 @@ export default function Home() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  useEffect(scrollToBottom, [messages, isChatOpen]);
+  useEffect(scrollToBottom, [messages]);
 
   // --- HANDLERS ---
   const handleSendMessage = async (text: string) => {
@@ -101,20 +99,19 @@ export default function Home() {
     }
   };
 
-  // Tracking Widget Logic (Kept as secondary validation tool)
   const checkStatus = () => {
     if (orderId === '123') {
       setStatus({
         step: 'Authentication',
-        message: 'Your item is currently being authenticated by Squad1 experts.',
-        accountability: 'Responsible: Squad1 Team',
+        message: 'Your item is being authenticated.',
+        accountability: 'Resp: Squad1 Team',
         color: 'blue'
       });
     } else if (orderId === '456') {
       setStatus({
         step: 'Pickup Pending',
-        message: 'Waiting for seller to handover the item. We have nudged them.',
-        accountability: 'Responsible: Seller',
+        message: 'Waiting for seller handover.',
+        accountability: 'Resp: Seller',
         color: 'yellow'
       });
     } else {
@@ -128,81 +125,92 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 font-sans text-gray-800 relative">
+    <main className="min-h-screen bg-gray-100 font-sans text-gray-800">
       
       {/* --- HEADER --- */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
           <div className="text-2xl font-bold tracking-tight text-black">
             SQUAD<span className="text-blue-600">1</span>
           </div>
-          <nav className="space-x-6 text-sm font-medium">
-            <a href="#" className="hover:text-blue-600">Home</a>
-            {/* Removed redundant "Support" button since chat is always open */}
-          </nav>
+          <div className="text-xs font-medium text-gray-400 uppercase tracking-widest">
+            Automated Support Demo
+          </div>
         </div>
       </header>
 
-      <div className="flex flex-col md:flex-row max-w-6xl mx-auto py-10 gap-8 px-6">
+      <div className="flex flex-col md:flex-row max-w-7xl mx-auto py-8 gap-6 px-6 h-[calc(100vh-80px)]">
         
-        {/* --- LEFT SIDE: CONTENT & TRACKER (Secondary) --- */}
-        <div className="flex-1 space-y-12">
+        {/* --- LEFT SIDE: COMPACT TRACKER (30% Width) --- */}
+        <div className="w-full md:w-[30%] flex flex-col gap-6">
           <section>
-            <h1 className="text-5xl font-extrabold mb-6 tracking-tight text-gray-900">
+            <h1 className="text-3xl font-extrabold mb-3 tracking-tight text-gray-900 leading-tight">
               Trust in every transaction.
             </h1>
-            <p className="text-xl text-gray-600">
-              Squad1 authenticates luxury products before they reach your door.
-              We ensure transparency, speed, and absolute certainty.
+            <p className="text-sm text-gray-600">
+              Squad1 authenticates luxury products. We ensure transparency and speed.
             </p>
           </section>
 
-          {/* Mini Tracker */}
-          <section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <h2 className="text-lg font-bold mb-4">Quick Tracker</h2>
-            <div className="flex gap-2 mb-4">
+          {/* Mini Tracker UI */}
+          <section className="bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+            <h2 className="text-sm font-bold mb-3 text-gray-500 uppercase tracking-wider">Manual Tracker</h2>
+            <div className="flex gap-2 mb-3">
               <input 
                 type="text" 
                 placeholder="Order ID" 
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
+                className="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm"
                 value={orderId}
                 onChange={(e) => setOrderId(e.target.value)}
               />
-              <button onClick={checkStatus} className="bg-black text-white px-4 py-2 rounded-lg">Check</button>
+              <button onClick={checkStatus} className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Go</button>
             </div>
+            
             {status && (
-              <div className={`p-3 rounded-lg border text-sm ${
+              <div className={`p-3 rounded-lg border text-xs ${
                 status.color === 'blue' ? 'bg-blue-50 border-blue-200' : 
                 status.color === 'yellow' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'
               }`}>
-                <div className="font-bold">{status.step}</div>
-                <div className="text-gray-600">{status.accountability}</div>
+                <div className="font-bold mb-1 text-sm">{status.step}</div>
+                <div className="text-gray-600 mb-2 leading-relaxed">{status.message}</div>
+                <div className="inline-block bg-white border border-gray-200 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wide">
+                  {status.accountability}
+                </div>
               </div>
             )}
           </section>
+
+           <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-xs text-blue-800">
+              <strong>Tip:</strong> Try asking the bot about Order <strong>123</strong> (Authentication) or <strong>456</strong> (Seller Delay).
+           </div>
         </div>
 
-        {/* --- RIGHT SIDE: THE CHAT INTERFACE (Primary) --- */}
-        <div className="flex-1 h-[600px] relative">
-          {/* Chat Container */}
-          <div className="w-full h-full bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
+        {/* --- RIGHT SIDE: GIANT CHAT INTERFACE (70% Width) --- */}
+        <div className="flex-1 w-full md:w-[70%] h-full">
+          <div className="w-full h-[750px] md:h-full bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
             
             {/* Chat Header */}
-            <div className="bg-black text-white p-6 flex justify-between items-center">
-              <div>
-                <h3 className="font-bold text-lg">Squad1 Concierge</h3>
-                <p className="text-xs text-gray-300">Live Support & Tracking</p>
+            <div className="bg-black text-white p-6 flex justify-between items-center shadow-md">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center font-bold text-lg">S1</div>
+                <div>
+                  <h3 className="font-bold text-lg">Squad1 Concierge</h3>
+                  <p className="text-xs text-gray-400">Powered by Nugget.ai</p>
+                </div>
               </div>
-              <div className="flex gap-2">
-                 <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-              </div>
+              <span className="bg-green-500 text-white text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide">Online</span>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-6 bg-gray-50 space-y-4">
+            <div className="flex-1 overflow-y-auto p-8 bg-gray-50 space-y-6">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[85%] rounded-2xl p-4 text-sm shadow-sm ${
+                  {/* Avatar for Bot */}
+                  {msg.sender === 'bot' && (
+                     <div className="w-8 h-8 bg-black rounded-full flex-shrink-0 mr-3 flex items-center justify-center text-white text-xs font-bold">S1</div>
+                  )}
+                  
+                  <div className={`max-w-[75%] rounded-2xl p-5 text-base shadow-sm leading-relaxed ${
                     msg.sender === 'user' 
                       ? 'bg-blue-600 text-white rounded-br-none' 
                       : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
@@ -214,12 +222,12 @@ export default function Home() {
               
               {/* Quick Actions */}
               {messages.length > 0 && messages[messages.length - 1].sender === 'bot' && messages[messages.length - 1].quickActions && (
-                 <div className="flex flex-wrap gap-2 mt-2">
+                 <div className="pl-11 flex flex-wrap gap-2">
                    {messages[messages.length - 1].quickActions?.map((action, idx) => (
                      <button 
                        key={idx}
                        onClick={() => handleSendMessage(action)}
-                       className="bg-white text-blue-700 text-xs font-bold px-4 py-2 rounded-full border border-blue-200 shadow-sm hover:bg-blue-50 transition"
+                       className="bg-white text-blue-700 text-sm font-semibold px-5 py-2.5 rounded-full border border-blue-200 shadow-sm hover:bg-blue-50 transition hover:border-blue-300 transform hover:-translate-y-0.5"
                      >
                        {action}
                      </button>
@@ -228,9 +236,9 @@ export default function Home() {
               )}
 
               {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-200 text-gray-500 rounded-2xl p-3 text-xs animate-pulse">
-                    Squad1 is typing...
+                <div className="flex justify-start items-center pl-11">
+                  <div className="bg-gray-200 text-gray-500 rounded-full px-4 py-2 text-xs animate-pulse">
+                    Typing...
                   </div>
                 </div>
               )}
@@ -238,22 +246,22 @@ export default function Home() {
             </div>
 
             {/* Input Area */}
-            <div className="p-4 bg-white border-t border-gray-100">
-              <div className="flex gap-2">
+            <div className="p-6 bg-white border-t border-gray-100">
+              <div className="flex gap-4 items-center">
                 <input 
                   type="text" 
                   value={inputMsg}
                   onChange={(e) => setInputMsg(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSendMessage(inputMsg)}
-                  placeholder="Type your Order ID or question..."
-                  className="flex-1 border border-gray-300 rounded-full px-6 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Type your message here..."
+                  className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-6 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 />
                 <button 
                   onClick={() => handleSendMessage(inputMsg)}
                   disabled={!inputMsg.trim()}
-                  className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-blue-700 disabled:opacity-50 shadow-md"
+                  className="bg-black text-white w-14 h-14 rounded-xl flex items-center justify-center hover:bg-gray-800 disabled:opacity-50 shadow-lg transition transform hover:scale-105"
                 >
-                  ➤
+                  <span className="text-xl">➤</span>
                 </button>
               </div>
             </div>
