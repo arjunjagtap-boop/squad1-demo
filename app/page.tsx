@@ -1,5 +1,6 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
+import NuggetChatWidget from './components/NuggetChatWidget';
 
 // --- TYPES ---
 interface OrderStatus {
@@ -56,6 +57,8 @@ const sendToNuggetAPI = async (message: string): Promise<ChatMessage> => {
     text: "I can check your order status immediately. Please enter your Order ID (e.g., 123 or 456)."
   };
 };
+
+
 
 export default function Home() {
   // --- STATE ---
@@ -271,4 +274,38 @@ export default function Home() {
       </div>
     </main>
   );
+
+  // Helper function to get token (with Caching)
+  const getAuthToken = async (userId: string) => {
+    const SESSION_KEY = `nugget_token_${userId}`;
+    
+    // 1. Check Session Storage first
+    const cachedToken = sessionStorage.getItem(SESSION_KEY);
+    if (cachedToken) {
+      console.log("Using cached Nugget token");
+      return cachedToken;
+    }
+
+    // 2. If no cache, call your Backend
+    try {
+      const res = await fetch("/api/get-nugget-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }), // Send the ID so backend can find name/email
+      });
+
+      const data = await res.json();
+      
+      if (data.accessToken) {
+        // 3. Cache it!
+        sessionStorage.setItem(SESSION_KEY, data.accessToken);
+        return data.accessToken;
+      }
+    } catch (err) {
+      console.error("Failed to get auth token", err);
+    }
+    return null;
+  };
+
+  
 }
