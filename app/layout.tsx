@@ -26,11 +26,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Nugget CSP Configuration */}
-        <meta 
-          httpEquiv="Content-Security-Policy" 
-          content="frame-src 'self' https://*.nugget.com; connect-src 'self' https://*.nugget.com;" 
-        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

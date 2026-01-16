@@ -10,36 +10,62 @@ declare global {
 
 export default function NuggetChatWidget() {
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  // 1. Define the ID you will use in your HTML
+  
+  // CONFIGURATION
   const CONTAINER_ID = "nugget-embedded-container"; 
-  const NUGGET_DOMAIN = 'squad1-demo'; // Your domain
+  const NUGGET_DOMAIN = 'security'; // Your domain prefix
 
-  // --- Token Handler (Same as before) ---
+  // --- HELPER: GENERATE GUEST ID ---
+  // We need a consistent ID for this session so the chat history sticks 
+  // even if they refresh the page.
+  const getGuestId = () => {
+    const STORAGE_KEY = 'nugget_guest_uid';
+    let id = sessionStorage.getItem(STORAGE_KEY);
+    
+    if (!id) {
+      // Generate a random string (mock UUID)
+      id = `guest_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`;
+      sessionStorage.setItem(STORAGE_KEY, id);
+    }
+    return id;
+  };
+
+  // --- TOKEN HANDLER (The "Guest" Logic) ---
   const handleGetToken = async () => {
-    const currentUserId = 'u_21'; 
-    const SESSION_KEY = `nugget_token_${currentUserId}`;
-    const cachedToken = sessionStorage.getItem(SESSION_KEY);
-    if (cachedToken) return cachedToken;
+    // 1. Mandatory: Check Cache First
+    const TOKEN_KEY = "nuggetAccessToken";
+    let token = sessionStorage.getItem(TOKEN_KEY);
+    
+    if (token) {
+        // console.log("Using cached Guest token");
+        return token;
+    }
 
+    // 2. If no token, fetch from backend using our Guest ID
     try {
+      const guestId = getGuestId();
+      
       const res = await fetch("/api/get-nugget-token", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: currentUserId }),
+        body: JSON.stringify({ userId: guestId }),
       });
+      
       const data = await res.json();
+      
       if (data.accessToken) {
-        sessionStorage.setItem(SESSION_KEY, data.accessToken);
+        // 3. Mandatory: Cache the new token
+        sessionStorage.setItem(TOKEN_KEY, data.accessToken);
         return data.accessToken;
       }
     } catch (err) {
-      console.error("Token fetch failed:", err);
+      console.error("Guest Token fetch failed:", err);
     }
     return null;
   };
 
   useEffect(() => {
-    // --- Load Script (Same as before) ---
+    // --- LOAD SCRIPT ---
     (function(w: any, d: any, s: any, a: any) {
       w[a] = w[a] || {
         q: [],
@@ -71,30 +97,26 @@ export default function NuggetChatWidget() {
     })(window, document, 'script', 'NuggetChat');
   }, []);
 
-  // --- Initialize for EMBEDDED MODE ---
   useEffect(() => {
     if (!scriptLoaded) return;
 
-    // We verify the container exists before initializing to be safe
-    const container = document.getElementById(CONTAINER_ID);
-    if (!container) {
-        console.warn(`Nugget container #${CONTAINER_ID} not found!`);
-        return; 
-    }
+    // Safety check for embedded container
+    if (!document.getElementById(CONTAINER_ID)) return;
 
-    console.log("Initializing Embedded Nugget Chat...");
+    console.log("Initializing Guest Chat...");
 
     window.NuggetChat.init({
-      //
       accessTokenHandler: handleGetToken,
       
-      // - Switch to Embedded Mode
+      // Embedded Config
       containerId: CONTAINER_ID,
-      containerTimeout: 5000, // Waits 5s for div to appear if not ready
+      containerTimeout: 5000,
+      
+      // UI Properties
+      initiallyVisible: true,
+      initiallyExpanded: true,
     });
 
-    // The docs say "You now have to manually open...". 
-    // We force open it to ensure it renders inside the box immediately.
     window.NuggetChat.open();
 
   }, [scriptLoaded]);

@@ -1,0 +1,125 @@
+{
+  "users": [
+    {
+      "id": "u_seller_delay",
+      "name": "Bob Delayed",
+      "email": "bob@test.com",
+      "phone": "+15550101",
+      "address": "456 Late Ln, CA",
+      "address_verified": true
+    },
+    {
+      "id": "u_squad_verify",
+      "name": "Charlie Verify",
+      "email": "charlie@test.com",
+      "phone": "+15550102",
+      "address": "789 Unsure Blvd, TX",
+      "address_verified": false
+    },
+    {
+      "id": "u_ship_delay",
+      "name": "Frank Stuck",
+      "email": "frank@test.com",
+      "phone": "+15550105",
+      "address": "303 Slow St, NV",
+      "address_verified": true
+    },
+    {
+      "id": "u_happy_path",
+      "name": "Eve Shipped",
+      "email": "eve@test.com",
+      "phone": "+15550104",
+      "address": "202 Fast Rd, WA",
+      "address_verified": true
+    },
+    {
+      "id": "u_multi_1",
+      "name": "Grace PowerUser",
+      "email": "grace@test.com",
+      "phone": "+15550106",
+      "address": "999 Luxury Penthouse, NY",
+      "address_verified": true
+    }
+  ],
+  "sellers": [
+    { "id": "s1", "name": "Vintage Vault", "contact_phone": "+15550101" },
+    { "id": "s2", "name": "Luxe Bags NY", "contact_phone": "+15550102" },
+    { "id": "s3", "name": "Chronos Watches", "contact_phone": "+15550103" },
+    { "id": "s4", "name": "Sneaker Headz", "contact_phone": "+15550104" },
+    { "id": "s5", "name": "Rare Finds", "contact_phone": "+15550105" }
+  ],
+  "shippers": [
+    { "id": "shp_fast", "name": "FastLogistics", "phone": "+19999999" },
+    { "id": "shp_secure", "name": "SecureShip", "phone": "+18888888" }
+  ],
+  "orders": [
+    {
+      "id": "ord_s_1",
+      "user_id": "u_seller_delay",
+      "seller_id": "s1",
+      "shipper_id": "shp_fast",
+      "product_name": "Vintage Rolex",
+      "status": "PICKUP_PENDING",
+      "accountability": "SELLER",
+      "pickup_deadline": "2023-10-25T10:00:00Z"
+    },
+    {
+      "id": "ord_sq_1",
+      "user_id": "u_squad_verify",
+      "seller_id": "s3",
+      "shipper_id": "shp_fast",
+      "product_name": "Gucci Belt",
+      "status": "AUTHENTICATING",
+      "accountability": "SQUAD1",
+      "pickup_actual_time": "2023-10-24T14:00:00Z"
+    },
+    {
+      "id": "ord_sh_delay",
+      "user_id": "u_ship_delay",
+      "seller_id": "s2",
+      "shipper_id": "shp_fast",
+      "product_name": "Nike Dunks",
+      "status": "DISPATCH_PENDING",
+      "accountability": "SHIPPING_PARTNER",
+      "pickup_actual_time": "2023-10-20T09:00:00Z"
+    },
+    {
+      "id": "ord_happy",
+      "user_id": "u_happy_path",
+      "seller_id": "s5",
+      "shipper_id": "shp_secure",
+      "product_name": "LV Wallet",
+      "status": "SHIPPED",
+      "accountability": "NONE",
+      "tracking_link": "https://track.squad1.com/ord_happy"
+    },
+    {
+      "id": "ord_multi_1",
+      "user_id": "u_multi_1",
+      "seller_id": "s1",
+      "shipper_id": "shp_fast",
+      "product_name": "Chanel Bag",
+      "status": "PICKUP_PENDING",
+      "accountability": "SELLER"
+    },
+    {
+      "id": "ord_multi_2",
+      "user_id": "u_multi_1",
+      "seller_id": "s5",
+      "shipper_id": "shp_secure",
+      "product_name": "Yeezy Slides",
+      "status": "SHIPPED",
+      "accountability": "NONE",
+      "tracking_link": "https://track.squad1.com/ord_multi_2"
+    },
+    {
+      "id": "ord_multi_3",
+      "user_id": "u_multi_1",
+      "seller_id": "s3",
+      "shipper_id": "shp_fast",
+      "product_name": "Rolex Submariner",
+      "status": "AUTHENTICATING",
+      "accountability": "SQUAD1"
+    }
+  ]
+}

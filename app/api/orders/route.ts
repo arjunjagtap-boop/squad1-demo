@@ -9,15 +9,15 @@ export async function GET(request: Request) {
 
   // Search logic: Exact match OR partial match (for ease of use)
   // Also checks if a USER ID was sent, to find that user's active order
-  let order = db.orders.find(o => o.id === id || o.id.includes(id));
+  // let order = db.orders.filter(o => o.id === id || o.id.includes(id));
   
-  if (!order) {
-    // specific logic: if ID is a user ID, find their order
-    const userOrder = db.orders.find(o => o.user_id === id);
-    if (userOrder) order = userOrder;
-  }
+  const orders = db.orders.filter(o => 
+    o.id === id ||              // Exact Order ID match
+    o.user_id === id ||         // Exact User ID match (Returns all orders for this user)
+    o.id.includes(id)           // Partial Order ID match (Search bar friendly)
+  );
 
-  if (order) return NextResponse.json(order);
+  if (orders) return NextResponse.json(orders);
   
   return NextResponse.json({ error: 'Order not found' }, { status: 404 });
 }
