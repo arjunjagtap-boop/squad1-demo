@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     console.log("--------------------------------");
     
     if (data.success && data.accessToken) {
-        return NextResponse.json({ accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBWZXJzaW9uIjoiIiwiYnVzaW5lc3NJZCI6NTIsImNsaWVudElkIjo5LCJjbGllbnRfbmFtZSI6InNlY3VyaXR5X2V4dGVybmFsIiwiZGlzcGxheU5hbWUiOiJHdWVzdCIsImVtYWlsIjoiIiwiZXhwIjoxNzY4NjYwMDU2LCJob3N0TmFtZSI6InNlY3VyaXR5Lm51Z2dldC5jb20iLCJpYXQiOjE3Njg1NzM2NTYsImxhbmd1YWdlIjoiIiwicGhvbmVOdW1iZXIiOiIiLCJwaG90b1VSTCI6IiIsInNvdXJjZSI6IndlYiIsInRlbmFudElEIjo2LCJ1aWQiOiJ0cGUifQ.gp8yMWpJ5_xwMu25YeggeXhVszgU5dnbkN7l7_75f-E" });
+        return NextResponse.json({ accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBWZXJzaW9uIjoiIiwiYnVzaW5lc3NJZCI6NTIsImNsaWVudElkIjo5LCJjbGllbnRfbmFtZSI6InNlY3VyaXR5X2V4dGVybmFsIiwiZGlzcGxheU5hbWUiOiJHdWVzdCIsImVtYWlsIjoiIiwiZXhwIjoxNzY4NzcxMDMzLCJob3N0TmFtZSI6InNlY3VyaXR5Lm51Z2dldC5jb20iLCJpYXQiOjE3Njg2ODQ2MzMsImxhbmd1YWdlIjoiIiwicGhvbmVOdW1iZXIiOiIiLCJwaG90b1VSTCI6IiIsInNvdXJjZSI6IndlYiIsInRlbmFudElEIjo2LCJ1aWQiOiJndWd5In0.SePBlCM2Vl0pt0de1c9rlfkISneGQ4q7pE2nYlX3uqE" });
     } else {
         return NextResponse.json({ error: 'No access token in response' }, { status: 500 });
     }
